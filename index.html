@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ödeme Takip</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Ödeme Takip Uygulaması</h1>
+    <form id="paymentForm">
+      <input type="date" id="date" required />
+      <input type="text" id="description" placeholder="Açıklama" required />
+      <input type="number" id="amount" placeholder="Tutar (₺)" required />
+      <button type="submit">Ekle</button>
+    </form>
+    <table id="paymentTable">
+      <thead>
+        <tr>
+          <th>Tarih</th>
+          <th>Açıklama</th>
+          <th>Tutar (₺)</th>
+          <th>Sil</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><strong>Toplam</strong></td>
+          <td colspan="2" id="total">₺0.00</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
