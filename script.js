@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("paymentForm");
   const date = document.getElementById("date");
@@ -15,6 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("payments", JSON.stringify(payments));
   }
 
+  // Tarih formatlama fonksiyonu
+  function formatDate(isoDate) {
+    if (!isoDate) return "";
+    const [year, month, day] = isoDate.split("-");
+    return `${day}.${month}.${year}`;
+  }
+
   function render() {
     tableBody.innerHTML = "";
     let total = 0;
@@ -26,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = document.createElement("tr");
       const amt = parseFloat(p.amount.replace(",", "."));
       row.innerHTML = `
-        <td>${p.date}</td>
+        <td>${formatDate(p.date)}</td>
         <td>${p.description}</td>
         <td>${p.category}</td>
         <td>₺${amt.toFixed(2).replace(".", ",")}</td>
@@ -64,20 +70,51 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("exportPDF").onclick = () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    doc.text("Ödeme Raporu", 14, 20);
-    let y = 30;
+    doc.setFontSize(18);
+    doc.text("Ödeme Raporu", 105, 15, { align: "center" });
+
+    // Tablo başlıkları
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    const headers = ["Tarih", "Açıklama", "Kategori", "Tutar (₺)"];
+    let startY = 30, startX = 14;
+    headers.forEach((h, i) => {
+      doc.text(h, startX + i * 45, startY);
+    });
+
+    doc.setFont(undefined, "normal");
+    let y = startY + 10;
     payments.forEach(p => {
       const amt = parseFloat(p.amount.replace(",", ".")).toFixed(2).replace(".", ",");
-      doc.text(`${p.date} - ${p.description} - ${p.category} - ₺${amt}`, 14, y);
+      const row = [
+        formatDate(p.date),
+        p.description,
+        p.category,
+        `₺${amt}`
+      ];
+      row.forEach((cell, i) => {
+        doc.text(cell, startX + i * 45, y);
+      });
       y += 10;
+      // Sayfa sonu kontrolü
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
     });
+
+    // Toplam tutar
+    let total = payments.reduce((sum, p) => sum + parseFloat(p.amount.replace(",", ".")), 0);
+    doc.setFont(undefined, "bold");
+    doc.text("Toplam", startX + 2 * 45, y);
+    doc.text("₺" + total.toFixed(2).replace(".", ","), startX + 3 * 45, y);
     doc.save("odeme_raporu.pdf");
   };
 
   document.getElementById("exportCSV").onclick = () => {
     let csv = "Tarih,Açıklama,Kategori,Tutar\n";
     payments.forEach(p => {
-      csv += `${p.date},"${p.description}",${p.category},${p.amount}\n`;
+      csv += `${formatDate(p.date)},"${p.description}",${p.category},${p.amount}\n`;
     });
     const blob = new Blob([csv], { type: "text/csv" });
     const link = document.createElement("a");
