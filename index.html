@@ -12,9 +12,10 @@
     <form id="paymentForm">
       <input type="date" id="date" required />
       <input type="text" id="description" placeholder="Açıklama" required />
-      <input type="number" id="amount" placeholder="Tutar (₺)" required />
+      <input type="text" id="amount" placeholder="Tutar (₺)" required />
       <button type="submit">Ekle</button>
     </form>
+    <button id="exportPDF">PDF Olarak Dışa Aktar</button>
     <table id="paymentTable">
       <thead>
         <tr>
@@ -28,11 +29,12 @@
       <tfoot>
         <tr>
           <td colspan="2"><strong>Toplam</strong></td>
-          <td colspan="2" id="total">₺0.00</td>
+          <td colspan="2" id="total">₺0,00</td>
         </tr>
       </tfoot>
     </table>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
